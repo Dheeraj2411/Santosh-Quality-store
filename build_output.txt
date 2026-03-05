@@ -1,0 +1,21 @@
+
+> build
+> vite build
+
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 36 modules transformed.
+[31m✗[39m Build failed in 379ms
+[31merror during build:
+[31m[@tailwindcss/vite:generate:build] ENOENT: no such file or directory, open 'C:\resources\css\app.css'[31m
+file: [36mC:/Users/jhasa/Desktop/Santosh Quality store/resources/js/Pages/Admin/Products/Create.vue?vue&type=style&index=0&scoped=1c2f17d9&lang.css[31m
+    at async open (node:internal/fs/promises:642:25)
+    at async Object.readFile (node:internal/fs/promises:1279:14)
+    at async At (file:///C:/Users/jhasa/Desktop/Santosh%20Quality%20store/node_modules/@tailwindcss/node/dist/index.mjs:10:4199)
+    at async loadStylesheet (file:///C:/Users/jhasa/Desktop/Santosh%20Quality%20store/node_modules/@tailwindcss/node/dist/index.mjs:10:2950)
+    at async file:///C:/Users/jhasa/Desktop/Santosh%20Quality%20store/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:21:2585
+    at async Promise.all (index 0)
+    at async Jt (file:///C:/Users/jhasa/Desktop/Santosh%20Quality%20store/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:21:2743)
+    at async Gi (file:///C:/Users/jhasa/Desktop/Santosh%20Quality%20store/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:32:2597)
+    at async ao (file:///C:/Users/jhasa/Desktop/Santosh%20Quality%20store/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:38:631)
+    at async vf (file:///C:/Users/jhasa/Desktop/Santosh%20Quality%20store/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:38:1406)[39m
