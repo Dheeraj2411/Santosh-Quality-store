@@ -15,6 +15,9 @@ WORKDIR /var/www/html
 
 COPY . .
 
+# Copy nginx config
+COPY nginx.conf /etc/nginx/sites-available/default
+
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 RUN npm install --legacy-peer-deps && npm run build
@@ -27,21 +30,6 @@ RUN mkdir -p \
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
-
-# Nginx config
-RUN echo 'server { \n\
-    listen 8080; \n\
-    root /var/www/html/public; \n\
-    index index.php; \n\
-    location / { \n\
-        try_files $uri $uri/ /index.php?$query_string; \n\
-    } \n\
-    location ~ \.php$ { \n\
-        fastcgi_pass 127.0.0.1:9000; \n\
-        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name; \n\
-        include fastcgi_params; \n\
-    } \n\
-}' > /etc/nginx/sites-available/default
 
 EXPOSE 8080
 
