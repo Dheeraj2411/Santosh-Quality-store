@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install Node.js and npm
 RUN apt-get update && apt-get install -y nodejs npm
+
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -18,16 +19,22 @@ WORKDIR /var/www/html
 COPY . .
 
 # Install PHP dependencies
-RUN composer install --no-interaction --optimize-autoloader --no-dev 2>/dev/null || \
-    (composer update --no-interaction && composer install --no-interaction)
+RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 # Install Node dependencies and build
 RUN npm install --legacy-peer-deps && npm run build
 
-# Set storage permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+# Create Laravel required directories
+RUN mkdir -p \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    bootstrap/cache
+
+# Set permissions
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
 EXPOSE 8000
 
-CMD sh -c "php artisan storage:link --force 2>/dev/null; php artisan serve --host=0.0.0.0 --port=8000"
+CMD sh -c "php artisan storage:link --force 2>/dev/null; php artisan config:clear; php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
