@@ -1,8 +1,8 @@
-FROM php:8.2-fpm
+FROM php:8.2-cli
 
 RUN apt-get update && apt-get install -y \
     git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
-    libfreetype6-dev libjpeg62-turbo-dev libpq-dev nginx \
+    libfreetype6-dev libjpeg62-turbo-dev libpq-dev \
     && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -14,9 +14,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 COPY . .
-
-# Copy nginx config
-COPY nginx.conf /etc/nginx/sites-available/default
 
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
@@ -31,10 +28,9 @@ RUN mkdir -p \
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 EXPOSE 8080
 
-CMD sh -c "php artisan storage:link --force || true && \
-    php artisan config:clear && \
-    php artisan migrate --force && \
-    php-fpm -D && \
-    nginx -g 'daemon off;'"
+CMD ["/start.sh"]
