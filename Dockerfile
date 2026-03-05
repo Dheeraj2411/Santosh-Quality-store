@@ -35,6 +35,6 @@ RUN mkdir -p \
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-EXPOSE 8000
+EXPOSE 8080
 
-CMD sh -c "php artisan storage:link --force 2>/dev/null; php artisan config:clear; php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
+CMD sh -c "php artisan storage:link --force 2>/dev/null && php artisan config:clear && php artisan serve --host=0.0.0.0 --port=${PORT}"
