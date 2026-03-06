@@ -16,7 +16,7 @@ class CheckoutController extends Controller
         private readonly OrderService $orderService,
     ) {}
 
-    public function index(): Response
+    public function index(): Response|\Illuminate\Http\RedirectResponse
     {
         $cart = $this->cartService->getCartWithProducts();
 

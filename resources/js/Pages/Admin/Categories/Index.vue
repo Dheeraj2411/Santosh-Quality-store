@@ -7,10 +7,10 @@
       </Link>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="rounded-2xl shadow-sm border overflow-hidden bg-white border-gray-100">
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
-          <thead class="bg-gray-50 border-b border-gray-100">
+          <thead class="border-b bg-gray-50 border-gray-100">
             <tr>
               <th class="text-left py-3 px-4 font-semibold text-gray-600">Category Name</th>
               <th class="text-left py-3 px-4 font-semibold text-gray-600">Products #</th>
@@ -21,16 +21,15 @@
           </thead>
           <tbody>
             <tr v-for="category in categories.data" :key="category.id"
-              class="border-b border-gray-50 hover:bg-gray-50">
+              class="border-b transition border-gray-50 hover:bg-gray-50">
               <td class="py-3 px-4">
                 <div class="font-semibold text-gray-800">{{ category.name }}</div>
-                <div v-if="category.description" class="text-xs text-gray-500 truncate max-w-[250px]">{{ category.description }}</div>
+                <div v-if="category.description" class="text-xs truncate max-w-[250px] text-gray-500">{{ category.description }}</div>
               </td>
-              <td class="py-3 px-4 text-gray-500 font-medium">{{ category.products_count }}</td>
+              <td class="py-3 px-4 font-medium text-gray-500">{{ category.products_count }}</td>
               <td class="py-3 px-4 text-gray-500">{{ category.sort_order }}</td>
               <td class="py-3 px-4">
-                <span :class="category.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'"
-                  class="px-2 py-1 rounded-full text-xs font-semibold">
+                <span :class="[category.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500', 'px-2 py-1 rounded-full text-xs font-semibold']">
                   {{ category.is_active ? 'Active' : 'Inactive' }}
                 </span>
               </td>
@@ -53,7 +52,9 @@
       <div v-if="categories.last_page > 1" class="flex justify-center gap-2 p-4 border-t border-gray-100">
         <Link v-for="link in categories.links" :key="link.label" :href="link.url || '#'" v-html="link.label"
           class="px-3 py-1.5 rounded-lg text-sm border transition"
-          :class="link.active ? 'bg-orange-500 text-white border-orange-500' : 'border-gray-200 text-gray-600'" />
+          :class="link.active 
+            ? 'bg-orange-500 text-white border-orange-500' 
+            : (isDark ? 'border-slate-600 text-slate-400 hover:bg-slate-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50')" />
       </div>
     </div>
   </AdminLayout>

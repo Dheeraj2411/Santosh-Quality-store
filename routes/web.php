@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Public;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User;
 use Illuminate\Support\Facades\Route;
 
@@ -22,12 +23,30 @@ Route::get('/api/products/search', [Public\ProductController::class, 'search'])-
 
 /*
 |--------------------------------------------------------------------------
+| Guest / Public Cart Routes
+|--------------------------------------------------------------------------
+*/
+// Cart (JSON API)
+Route::get('/cart', [User\CartController::class, 'index'])->name('cart.index');
+Route::get('/api/cart', [User\CartController::class, 'getCart'])->name('cart.get');
+Route::post('/api/cart/add', [User\CartController::class, 'add'])->name('cart.add');
+Route::put('/api/cart/{productId}', [User\CartController::class, 'update'])->name('cart.update');
+Route::delete('/api/cart/{productId}', [User\CartController::class, 'remove'])->name('cart.remove');
+
+/*
+|--------------------------------------------------------------------------
 | Authenticated User Routes
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard
-    Route::get('/dashboard', [User\DashboardController::class, 'index'])->name('dashboard');
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Dashboard & User protected routes
+    Route::middleware('user')->group(function () {
+        Route::get('/dashboard', [User\DashboardController::class, 'index'])->name('dashboard');
     Route::put('/dashboard/profile', [User\DashboardController::class, 'updateProfile'])->name('user.profile.update');
     Route::get('/dashboard/orders', [User\DashboardController::class, 'orders'])->name('user.orders.index');
     Route::get('/dashboard/orders/{order}', [User\DashboardController::class, 'showOrder'])->name('user.orders.show');
@@ -40,13 +59,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/addresses/{address}', [User\AddressController::class, 'update'])->name('addresses.update');
     Route::delete('/addresses/{address}', [User\AddressController::class, 'destroy'])->name('addresses.destroy');
     Route::post('/addresses/{address}/default', [User\AddressController::class, 'setDefault'])->name('addresses.default');
-
-    // Cart (JSON API)
-    Route::get('/cart', [User\CartController::class, 'index'])->name('cart.index');
-    Route::get('/api/cart', [User\CartController::class, 'getCart'])->name('cart.get');
-    Route::post('/api/cart/add', [User\CartController::class, 'add'])->name('cart.add');
-    Route::put('/api/cart/{productId}', [User\CartController::class, 'update'])->name('cart.update');
-    Route::delete('/api/cart/{productId}', [User\CartController::class, 'remove'])->name('cart.remove');
 
     // Checkout
     Route::get('/checkout', [User\CheckoutController::class, 'index'])->name('checkout.index');
@@ -62,6 +74,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Reviews
     Route::post('/reviews', [User\ReviewController::class, 'store'])->name('reviews.store');
     Route::delete('/reviews/{review}', [User\ReviewController::class, 'destroy'])->name('reviews.destroy');
+    }); // End user middleware group
 });
 
 /*
@@ -96,6 +109,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Settings
     Route::get('/settings', [Admin\SettingsController::class, 'index'])->name('settings.index');
     Route::put('/settings', [Admin\SettingsController::class, 'update'])->name('settings.update');
+
+    // POS
+    Route::get('/pos', [Admin\PosController::class, 'index'])->name('pos.index');
+    Route::post('/pos/scan', [Admin\PosController::class, 'scan'])->name('pos.scan');
+    Route::post('/pos/checkout', [Admin\PosController::class, 'checkout'])->name('pos.checkout');
 });
 
 require __DIR__.'/auth.php';

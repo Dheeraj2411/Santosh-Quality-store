@@ -70,7 +70,8 @@ class DashboardController extends Controller
 
     public function showOrder(Order $order): Response
     {
-        $this->authorize('view', $order);
+        // Ensure the user can only view their own orders
+        abort_if($order->user_id !== auth()->id(), 403);
 
         return Inertia::render('Dashboard/OrderDetail', [
             'order' => [

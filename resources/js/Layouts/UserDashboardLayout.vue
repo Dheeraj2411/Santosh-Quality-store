@@ -4,10 +4,10 @@
       <div class="flex flex-col md:flex-row gap-8">
         <!-- Sidebar -->
         <aside class="w-full md:w-64 flex-shrink-0">
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div class="rounded-2xl shadow-sm overflow-hidden bg-white border border-gray-100">
             <!-- Profile Header -->
             <div class="bg-gradient-to-br from-orange-500 to-amber-500 p-6 text-white text-center">
-              <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl font-bold">
+              <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl font-bold backdrop-blur-sm">
                 {{ $page.props.auth.user?.name?.[0] }}
               </div>
               <div class="font-bold text-lg">{{ $page.props.auth.user?.name }}</div>
@@ -18,6 +18,9 @@
             <nav class="p-3 space-y-1">
               <SidebarLink href="/dashboard" :active="isActive('/dashboard', true)">
                 👤 My Profile
+              </SidebarLink>
+              <SidebarLink href="/profile" :active="isActive('/profile')">
+                ⚙️ Account Settings
               </SidebarLink>
               <SidebarLink href="/dashboard/orders" :active="isActive('/dashboard/orders')">
                 📦 My Orders
@@ -31,9 +34,9 @@
               <SidebarLink href="/dashboard/reviews" :active="isActive('/dashboard/reviews')">
                 ⭐ My Reviews
               </SidebarLink>
-              <div class="pt-2 border-t border-gray-100 mt-2">
+              <div class="pt-2 mt-2 border-t border-gray-100">
                 <Link href="/logout" method="post" as="button"
-                  class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 rounded-xl transition">
+                  class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-500 rounded-xl transition hover:bg-red-50">
                   🚪 Logout
                 </Link>
               </div>
@@ -46,11 +49,11 @@
           <!-- Flash Messages -->
           <div v-if="$page.props.flash?.success || $page.props.flash?.error" class="mb-6">
             <div v-if="$page.props.flash.success"
-              class="bg-green-50 border border-green-200 text-green-700 px-5 py-3 rounded-xl flex items-center gap-2">
+              class="px-5 py-3 rounded-xl flex items-center gap-2 bg-green-50 border border-green-200 text-green-700">
               ✅ {{ $page.props.flash.success }}
             </div>
             <div v-if="$page.props.flash.error"
-              class="bg-red-50 border border-red-200 text-red-700 px-5 py-3 rounded-xl flex items-center gap-2">
+              class="px-5 py-3 rounded-xl flex items-center gap-2 bg-red-50 border border-red-200 text-red-700">
               ❌ {{ $page.props.flash.error }}
             </div>
           </div>
@@ -63,7 +66,7 @@
 </template>
 
 <script setup>
-import { computed, h } from 'vue'
+import { h } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import GuestLayout from '@/Layouts/GuestLayout.vue'
 
@@ -92,7 +95,7 @@ const SidebarLink = defineComponent({
         class: [
           'flex items-center gap-2 px-4 py-2.5 text-sm rounded-xl transition font-medium',
           props.active
-            ? 'bg-orange-500 text-white'
+            ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm'
             : 'text-gray-600 hover:bg-orange-50 hover:text-orange-600',
         ],
       },

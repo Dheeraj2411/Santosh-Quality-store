@@ -37,6 +37,15 @@
             <label class="label">SKU</label>
             <input v-model="form.sku" type="text" class="input" placeholder="Optional unique code" />
           </div>
+          <div>
+            <label class="label">Barcode</label>
+            <div class="flex gap-2">
+              <input v-model="form.barcode" type="text" class="input flex-1" placeholder="Type or scan..." />
+              <button type="button" @click="showScanner = true" class="bg-gray-100 hover:bg-gray-200 border border-gray-200 text-gray-700 px-4 rounded-xl flex items-center justify-center font-bold px-3 transition" title="Scan Barcode">
+                📷 Scan
+              </button>
+            </div>
+          </div>
           <div class="md:col-span-2">
             <label class="label">Description</label>
             <textarea v-model="form.description" rows="3" class="input resize-none"
@@ -74,6 +83,9 @@
         </div>
       </form>
     </div>
+    
+    <!-- Barcode Scanner Modal -->
+    <BarcodeScannerModal :show="showScanner" @close="showScanner = false" @scan="handleScan" />
   </AdminLayout>
 </template>
 
@@ -81,15 +93,22 @@
 import { ref } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import BarcodeScannerModal from '@/Components/BarcodeScannerModal.vue'
 
 const props = defineProps({ categories: Array })
 const submitting = ref(false)
+const showScanner = ref(false)
 
 const form = ref({
   name: '', category_id: '', description: '', price: '', mrp: '',
-  unit: 'kg', stock: 0, sku: '', is_featured: false, is_active: true,
+  unit: 'kg', stock: 0, sku: '', barcode: '', is_featured: false, is_active: true,
   thumbnail: null, images: [],
 })
+
+function handleScan(decodedText) {
+  form.value.barcode = decodedText
+  showScanner.value = false
+}
 
 function submit() {
   submitting.value = true

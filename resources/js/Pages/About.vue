@@ -2,11 +2,11 @@
   <GuestLayout>
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
       <h1 class="text-4xl font-extrabold text-gray-900 mb-2">About Us</h1>
-      <p class="text-orange-500 font-medium text-lg mb-8">संतोष स्टोर • Santosh Store</p>
+      <p class="text-orange-500 font-medium text-lg mb-8">{{ storeName }}</p>
 
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
         <p class="text-gray-600 text-lg leading-relaxed">
-          {{ settings?.about_text || 'Santosh Store has been serving the residents of Kirti Nagar and Sector 15, Gurugram since 1995. We pride ourselves on offering fresh, high-quality groceries at the best prices. Our store provides in-store shopping, pickup, and home delivery services.' }}
+          {{ settings?.about_text || storeName + ' has been serving the residents of Kirti Nagar and Sector 15, Gurugram since 1995. We pride ourselves on offering fresh, high-quality groceries at the best prices. Our store provides in-store shopping, pickup, and home delivery services.' }}
         </p>
       </div>
 
@@ -41,6 +41,10 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { usePage } from '@inertiajs/vue3'
 import GuestLayout from '@/Layouts/GuestLayout.vue'
 defineProps({ settings: Object })
+const storeName = computed(() => usePage().props.settings?.store_name || 'Santosh Store')
+const storeTagline = computed(() => usePage().props.settings?.store_tagline || '')
 </script>

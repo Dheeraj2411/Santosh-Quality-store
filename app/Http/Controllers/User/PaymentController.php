@@ -84,12 +84,17 @@ class PaymentController extends Controller
 
         // Place the order with payment details
         try {
-            $cart    = $this->cartService->getCart();
+            $cart    = $this->cartService->getCartWithProducts();
             $address = \App\Models\Address::where('id', $request->address_id)
                 ->where('user_id', $request->user()->id)
                 ->firstOrFail();
 
+            if (empty($cart['items'])) {
+                return response()->json(['error' => 'Cart is empty.'], 422);
+            }
+
             $order = $this->orderRepository->create([
+                'order_number'        => \App\Models\Order::generateOrderNumber(),
                 'user_id'             => $request->user()->id,
                 'address_id'          => $address->id,
                 'subtotal'            => $cart['subtotal'],
@@ -100,17 +105,31 @@ class PaymentController extends Controller
                 'razorpay_order_id'   => $request->razorpay_order_id,
                 'razorpay_payment_id' => $request->razorpay_payment_id,
                 'notes'               => $request->notes,
-                'status'              => 'processing', // Auto-move to processing since paid
+                'status'              => 'processing',
                 'shipping_address'    => $address->toArray(),
-            ], $cart['items']);
+            ]);
 
-            $this->cartService->clear();
+            // Create order items and decrement stock
+            foreach ($cart['items'] as $item) {
+                \App\Models\OrderItem::create([
+                    'order_id'     => $order->id,
+                    'product_id'   => $item['product_id'],
+                    'product_name' => $item['name'],
+                    'price'        => $item['price'],
+                    'quantity'     => $item['quantity'],
+                    'total'        => $item['line_total'],
+                ]);
+                \App\Models\Product::where('id', $item['product_id'])->decrement('stock', $item['quantity']);
+            }
+
+            $this->cartService->clearCart();
 
             return response()->json([
                 'success'       => true,
                 'message'       => 'Payment successful! Your order has been placed.',
                 'order_number'  => $order->order_number,
                 'redirect'      => route('user.orders.show', $order->id),
+                'whatsapp_url'  => $this->buildWhatsAppUrl($order, $cart['items'], $address, $request->user()),
             ]);
         } catch (\Exception $e) {
             \Log::error('Razorpay order placement failed: ' . $e->getMessage());
@@ -129,7 +148,7 @@ class PaymentController extends Controller
         ]);
 
         try {
-            $cart    = $this->cartService->getCart();
+            $cart    = $this->cartService->getCartWithProducts();
             $address = \App\Models\Address::where('id', $request->address_id)
                 ->where('user_id', $request->user()->id)
                 ->firstOrFail();
@@ -139,6 +158,7 @@ class PaymentController extends Controller
             }
 
             $order = $this->orderRepository->create([
+                'order_number'     => \App\Models\Order::generateOrderNumber(),
                 'user_id'          => $request->user()->id,
                 'address_id'       => $address->id,
                 'subtotal'         => $cart['subtotal'],
@@ -149,12 +169,28 @@ class PaymentController extends Controller
                 'notes'            => $request->notes,
                 'status'           => 'pending',
                 'shipping_address' => $address->toArray(),
-            ], $cart['items']);
+            ]);
 
-            $this->cartService->clear();
+            // Create order items and decrement stock
+            foreach ($cart['items'] as $item) {
+                \App\Models\OrderItem::create([
+                    'order_id'     => $order->id,
+                    'product_id'   => $item['product_id'],
+                    'product_name' => $item['name'],
+                    'price'        => $item['price'],
+                    'quantity'     => $item['quantity'],
+                    'total'        => $item['line_total'],
+                ]);
+                \App\Models\Product::where('id', $item['product_id'])->decrement('stock', $item['quantity']);
+            }
+
+            $this->cartService->clearCart();
+
+            $whatsappUrl = $this->buildWhatsAppUrl($order, $cart['items'], $address, $request->user());
 
             return redirect()->route('user.orders.show', $order->id)
-                ->with('success', 'Order placed! We will deliver soon. 🎉');
+                ->with('success', 'Order placed! We will deliver soon. 🎉')
+                ->with('whatsapp_url', $whatsappUrl);
         } catch (\Exception $e) {
             \Log::error('COD order failed: ' . $e->getMessage());
             return back()->with('error', 'Could not place order. Please try again.');
@@ -184,5 +220,34 @@ class PaymentController extends Controller
         curl_close($ch);
 
         return json_decode($response, true) ?? [];
+    }
+
+    /**
+     * Build a WhatsApp click-to-chat URL with order details.
+     */
+    private function buildWhatsAppUrl($order, array $items, $address, $user): string
+    {
+        // Use store phone from settings, fallback to hardcoded
+        $storePhone = \Illuminate\Support\Facades\DB::table('settings')->where('key', 'store_phone')->value('value') ?? '919650671568';
+        // Strip non-digits
+        $storePhone = preg_replace('/\D/', '', $storePhone);
+
+        $itemLines = [];
+        foreach ($items as $item) {
+            $itemLines[] = "• {$item['name']} × {$item['quantity']} = ₹{$item['line_total']}";
+        }
+
+        $message = "🛒 *New Order from {$user->name}*\n"
+            . "📋 Order: #{$order->order_number}\n"
+            . "💰 Total: ₹{$order->total}\n"
+            . "💳 Payment: " . strtoupper($order->payment_method) . "\n\n"
+            . "*Items:*\n" . implode("\n", $itemLines) . "\n\n"
+            . "📍 *Delivery Address:*\n"
+            . "{$address->name}, {$address->line1}" . ($address->line2 ? ", {$address->line2}" : '')
+            . ", {$address->city}, {$address->state} {$address->pincode}\n\n"
+            . ($order->notes ? "📝 Notes: {$order->notes}\n" : '')
+            . "📞 Phone: {$user->phone}";
+
+        return 'https://wa.me/' . $storePhone . '?text=' . urlencode($message);
     }
 }

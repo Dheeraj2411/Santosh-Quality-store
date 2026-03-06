@@ -18,6 +18,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): Response
     {
+        // Capture the previous URL if they didn't come from login/register itself
+        $previousUrl = url()->previous();
+        if ($previousUrl !== url('/login') && $previousUrl !== url('/register')) {
+            session(['url.intended' => $previousUrl]);
+        }
+
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
@@ -32,6 +38,10 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        if ($request->user() && $request->user()->isAdmin()) {
+            return redirect()->intended(route('admin.dashboard', absolute: false));
+        }
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

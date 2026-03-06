@@ -1,19 +1,17 @@
 <script setup>
+import { inject, computed } from 'vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+
+const storeName = computed(() => usePage().props.settings?.store_name || 'Santosh Store')
 
 defineProps({
-    canResetPassword: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
+    canResetPassword: { type: Boolean },
+    status: { type: String },
 });
 
 const form = useForm({
@@ -33,68 +31,72 @@ const submit = () => {
     <GuestLayout>
         <Head title="Log in" />
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
-            {{ status }}
-        </div>
+        <div class="min-h-[70vh] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
+          <div class="w-full max-w-md animate-slide-up">
+            <!-- Logo & Header -->
+            <div class="text-center mb-8">
+              <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <span class="text-white font-bold text-2xl">स</span>
+              </div>
+              <h1 class="text-3xl font-extrabold text-gray-900">Welcome Back</h1>
+              <p class="mt-2 text-gray-500">Sign in to your {{ storeName }} account</p>
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+            <!-- Glass Card -->
+            <div class="rounded-2xl p-8 shadow-xl glass-card">
 
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
+              <div v-if="status" class="mb-4 text-sm font-medium px-4 py-3 rounded-xl bg-green-50 text-green-600">
+                {{ status }}
+              </div>
 
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
+              <form @submit.prevent="submit" class="space-y-5">
+                <div>
+                  <InputLabel for="email" value="Email Address"
+                    class="dark:text-slate-300" />
+                  <TextInput id="email" type="email"
+                    class="mt-1.5 block w-full rounded-xl px-4 py-3 text-sm transition bg-white/80 border-gray-200 focus:border-orange-500 focus:ring-orange-500"
+                    v-model="form.email" required autofocus autocomplete="username"
+                    placeholder="you@example.com" />
+                  <InputError class="mt-2" :message="form.errors.email" />
+                </div>
 
-            <div class="mt-4 block">
-                <label class="flex items-center">
+                <div>
+                  <InputLabel for="password" value="Password"
+                    class="dark:text-slate-300" />
+                  <TextInput id="password" type="password"
+                    class="mt-1.5 block w-full rounded-xl px-4 py-3 text-sm transition bg-white/80 border-gray-200 focus:border-orange-500 focus:ring-orange-500"
+                    v-model="form.password" required autocomplete="current-password"
+                    placeholder="••••••••" />
+                  <InputError class="mt-2" :message="form.errors.password" />
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <label class="flex items-center gap-2 cursor-pointer">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600"
-                        >Remember me</span
-                    >
-                </label>
-            </div>
+                    <span class="text-sm text-gray-600">Remember me</span>
+                  </label>
+                  <Link v-if="canResetPassword" :href="route('password.request')"
+                    class="text-sm font-medium transition text-orange-600 hover:text-orange-700">
+                    Forgot password?
+                  </Link>
+                </div>
 
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                    Forgot your password?
+                <button type="submit"
+                  class="w-full py-3.5 rounded-xl font-bold text-white text-sm transition shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-200 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 disabled:opacity-50"
+                  :disabled="form.processing">
+                  {{ form.processing ? 'Signing in...' : 'Sign In' }}
+                </button>
+              </form>
+
+              <p class="text-center mt-6 text-sm text-gray-500">
+                Don't have an account?
+                <Link :href="route('register')" class="font-semibold transition text-orange-600 hover:text-orange-700">
+                  Create one
                 </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Log in
-                </PrimaryButton>
+              </p>
             </div>
-        </form>
+          </div>
+        </div>
     </GuestLayout>
 </template>

@@ -1,0 +1,23 @@
+
+> build
+> vite build
+
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 10 modules transformed.
+
+[31m✗[39m Build failed in 168ms
+[31merror during build:
+[31m[vite:vue] [plugin vite:vue] resources/js/Pages/Admin/Customers/Index.vue (45:31): Error parsing JavaScript expression: Unexpected token, expected "," (1:80)[31m
+file: [36mC:/Users/jhasa/Desktop/Santosh Quality store/resources/js/Pages/Admin/Customers/Index.vue:45:31[31m
+SyntaxError: [plugin vite:vue] resources/js/Pages/Admin/Customers/Index.vue (45:31): Error parsing JavaScript expression: Unexpected token, expected "," (1:80)
+    at createCompilerError (C:\Users\jhasa\Desktop\Santosh Quality store\node_modules\@vue\compiler-core\dist\compiler-core.cjs.prod.js:1374:17)
+    at emitError (C:\Users\jhasa\Desktop\Santosh Quality store\node_modules\@vue\compiler-core\dist\compiler-core.cjs.prod.js:2980:5)
+    at createExp (C:\Users\jhasa\Desktop\Santosh Quality store\node_modules\@vue\compiler-core\dist\compiler-core.cjs.prod.js:2973:7)
+    at Object.onattribend (C:\Users\jhasa\Desktop\Santosh Quality store\node_modules\@vue\compiler-core\dist\compiler-core.cjs.prod.js:2528:29)
+    at Tokenizer.handleInAttrValue (C:\Users\jhasa\Desktop\Santosh Quality store\node_modules\@vue\compiler-core\dist\compiler-core.cjs.prod.js:959:16)
+    at Tokenizer.stateInAttrValueDoubleQuotes (C:\Users\jhasa\Desktop\Santosh Quality store\node_modules\@vue\compiler-core\dist\compiler-core.cjs.prod.js:969:10)
+    at Tokenizer.parse (C:\Users\jhasa\Desktop\Santosh Quality store\node_modules\@vue\compiler-core\dist\compiler-core.cjs.prod.js:1113:16)
+    at Object.baseParse (C:\Users\jhasa\Desktop\Santosh Quality store\node_modules\@vue\compiler-core\dist\compiler-core.cjs.prod.js:3012:13)
+    at Object.parse (C:\Users\jhasa\Desktop\Santosh Quality store\node_modules\@vue\compiler-dom\dist\compiler-dom.cjs.prod.js:665:23)
+    at Object.parse$1 [as parse] (C:\Users\jhasa\Desktop\Santosh Quality store\node_modules\@vue\compiler-sfc\dist\compiler-sfc.cjs.js:1824:24)[39m

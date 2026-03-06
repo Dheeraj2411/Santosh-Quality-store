@@ -10,6 +10,7 @@ storage/framework/sessions
 storage/framework/views
 public/build
 public/hot
+public/storage
 *.md
 tests
 .phpunit.result.cache

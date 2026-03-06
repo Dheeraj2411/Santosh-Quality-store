@@ -15,10 +15,10 @@
         class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none" />
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="rounded-2xl shadow-sm border overflow-hidden bg-white border-gray-100">
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
-          <thead class="bg-gray-50 border-b border-gray-100">
+          <thead class="border-b bg-gray-50 border-gray-100">
             <tr>
               <th class="text-left py-3 px-4 font-semibold text-gray-600">Order #</th>
               <th class="text-left py-3 px-4 font-semibold text-gray-600">Customer</th>
@@ -29,7 +29,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="order in orders.data" :key="order.id" class="border-b border-gray-50 hover:bg-gray-50">
+            <tr v-for="order in orders.data" :key="order.id" 
+              class="border-b transition border-gray-50 hover:bg-gray-50">
               <td class="py-3 px-4 font-mono font-medium text-gray-800">#{{ order.order_number }}</td>
               <td class="py-3 px-4 text-gray-600">{{ order.user_name }}</td>
               <td class="py-3 px-4 font-bold text-orange-600">₹{{ Number(order.total).toLocaleString('en-IN') }}</td>
@@ -44,9 +45,9 @@
                   }">{{ order.status }}
                 </span>
               </td>
-              <td class="py-3 px-4 text-gray-400 text-xs">{{ order.created_at }}</td>
+              <td class="py-3 px-4 text-xs text-gray-400">{{ order.created_at }}</td>
               <td class="py-3 px-4">
-                <Link :href="'/admin/orders/' + order.id" class="text-blue-500 hover:text-blue-600 text-xs font-medium">View</Link>
+                <Link :href="'/admin/orders/' + order.id" class="text-xs font-medium transition text-blue-500 hover:text-blue-600">View</Link>
               </td>
             </tr>
           </tbody>

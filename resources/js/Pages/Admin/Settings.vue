@@ -1,51 +1,62 @@
 <template>
   <AdminLayout title="Store Settings" subtitle="Manage store information and configuration">
-    <div class="max-w-2xl bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+    <div class="max-w-2xl rounded-2xl shadow-sm p-8 bg-white border border-gray-100">
       <form @submit.prevent="save" class="space-y-5">
         <div>
-          <label class="label">Store Name *</label>
-          <input v-model="form.store_name" type="text" required class="input" />
+          <label class="block text-sm font-semibold mb-1.5 text-gray-700">Store Name *</label>
+          <input v-model="form.store_name" type="text" required
+            class="w-full rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none transition border border-gray-200 text-gray-900" />
         </div>
         <div>
-          <label class="label">Tagline</label>
-          <input v-model="form.store_tagline" type="text" class="input" />
+          <label class="block text-sm font-semibold mb-1.5 text-gray-700">Tagline</label>
+          <input v-model="form.store_tagline" type="text"
+            class="w-full rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none transition border border-gray-200 text-gray-900" />
         </div>
         <div>
-          <label class="label">Address</label>
-          <textarea v-model="form.address" rows="2" class="input resize-none"></textarea>
+          <label class="block text-sm font-semibold mb-1.5 text-gray-700">Address</label>
+          <textarea v-model="form.address" rows="2"
+            class="w-full rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none resize-none transition border border-gray-200 text-gray-900"></textarea>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label class="label">Phone</label>
-            <input v-model="form.phone" type="text" class="input" />
+            <label class="block text-sm font-semibold mb-1.5 text-gray-700">Phone</label>
+            <input v-model="form.phone" type="text"
+              class="w-full rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none transition border border-gray-200 text-gray-900" />
           </div>
           <div>
-            <label class="label">Email</label>
-            <input v-model="form.email" type="email" class="input" />
+            <label class="block text-sm font-semibold mb-1.5 text-gray-700">Email</label>
+            <input v-model="form.email" type="email"
+              class="w-full rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none transition border border-gray-200 text-gray-900" />
           </div>
           <div>
-            <label class="label">Opening Time</label>
-            <input v-model="form.open_time" type="time" class="input" />
+            <label class="block text-sm font-semibold mb-1.5 text-gray-700">Opening Time</label>
+            <input v-model="form.open_time" type="time"
+              class="w-full rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none transition border border-gray-200 text-gray-900" />
           </div>
           <div>
-            <label class="label">Closing Time</label>
-            <input v-model="form.close_time" type="time" class="input" />
+            <label class="block text-sm font-semibold mb-1.5 text-gray-700">Closing Time</label>
+            <input v-model="form.close_time" type="time"
+              class="w-full rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none transition border border-gray-200 text-gray-900" />
           </div>
           <div>
-            <label class="label">Free Delivery Above (₹)</label>
-            <input v-model="form.delivery_free_above" type="number" class="input" />
+            <label class="block text-sm font-semibold mb-1.5 text-gray-700">Free Delivery Above (₹)</label>
+            <input v-model="form.delivery_free_above" type="number"
+              class="w-full rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none transition border border-gray-200 text-gray-900" />
           </div>
           <div>
-            <label class="label">Delivery Charge (₹)</label>
-            <input v-model="form.delivery_charge" type="number" class="input" />
+            <label class="block text-sm font-semibold mb-1.5 text-gray-700">Delivery Charge (₹)</label>
+            <input v-model="form.delivery_charge" type="number"
+              class="w-full rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none transition border border-gray-200 text-gray-900" />
           </div>
         </div>
         <div>
-          <label class="label">About Text</label>
-          <textarea v-model="form.about_text" rows="4" class="input resize-none"></textarea>
+          <label class="block text-sm font-semibold mb-1.5 text-gray-700">About Text</label>
+          <textarea v-model="form.about_text" rows="4"
+            class="w-full rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none resize-none transition border border-gray-200 text-gray-900"></textarea>
         </div>
-        <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl font-bold transition">
-          Save Settings
+        <button type="submit"
+          class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-8 py-3 rounded-xl font-bold transition shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-200">
+          💾 Save Settings
         </button>
       </form>
     </div>
@@ -76,9 +87,3 @@ function save() {
   router.put('/admin/settings', form.value)
 }
 </script>
-
-<style scoped>
-@reference "../../../css/app.css";
-.label { @apply block text-sm font-semibold text-gray-700 mb-1.5; }
-.input { @apply w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none; }
-</style>

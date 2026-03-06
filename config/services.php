@@ -40,4 +40,8 @@ return [
         'key_secret' => env('RAZORPAY_KEY_SECRET', ''),
     ],
 
+    'whatsapp' => [
+        'owner_number' => env('WHATSAPP_OWNER_NUMBER', '919910494819'),
+    ],
+
 ];

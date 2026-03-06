@@ -7,10 +7,10 @@
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="rounded-2xl shadow-sm border overflow-hidden bg-white border-gray-100">
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
-          <thead class="bg-gray-50 border-b border-gray-100">
+          <thead class="border-b bg-gray-50 border-gray-100">
             <tr>
               <th class="text-left py-3 px-4 font-semibold text-gray-600">Customer</th>
               <th class="text-left py-3 px-4 font-semibold text-gray-600">Contact</th>
@@ -22,7 +22,7 @@
           </thead>
           <tbody>
             <tr v-for="customer in customers.data" :key="customer.id"
-              class="border-b border-gray-50 hover:bg-gray-50">
+              class="border-b transition border-gray-50 hover:bg-gray-50">
               <td class="py-3 px-4">
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center font-bold text-lg">
@@ -37,20 +37,18 @@
                 <div class="text-gray-900">{{ customer.email }}</div>
                 <div class="text-xs text-gray-500">{{ customer.phone || 'No phone' }}</div>
               </td>
-              <td class="py-3 px-4 text-gray-600 font-medium pb-4">
-                <span class="bg-gray-100 px-2 py-1 rounded inline-block mt-1">{{ customer.orders_count }} orders</span>
+              <td class="py-3 px-4 font-medium pb-4 text-gray-600">
+                <span class="px-2 py-1 rounded inline-block mt-1 bg-gray-100">{{ customer.orders_count }} orders</span>
               </td>
               <td class="py-3 px-4 text-gray-500">{{ customer.created_at }}</td>
               <td class="py-3 px-4">
-                <span :class="customer.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
-                  class="px-2 py-1 rounded-full text-xs font-semibold">
+                <span :class="[customer.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700', 'px-2 py-1 rounded-full text-xs font-semibold']">
                   {{ customer.is_active ? 'Active' : 'Banned' }}
                 </span>
               </td>
               <td class="py-3 px-4 text-right">
                 <button @click="toggleStatus(customer)"
-                  :class="customer.is_active ? 'text-red-500 hover:text-red-600' : 'text-green-500 hover:text-green-600'"
-                  class="text-xs font-bold transition">
+                  :class="[customer.is_active ? 'text-red-500 hover:text-red-600' : 'text-green-500 hover:text-green-600', 'text-xs font-bold transition']">
                   {{ customer.is_active ? 'Disable' : 'Enable' }}
                 </button>
               </td>
@@ -65,7 +63,9 @@
       <div v-if="customers.last_page > 1" class="flex justify-center gap-2 p-4 border-t border-gray-100">
         <Link v-for="link in customers.links" :key="link.label" :href="link.url || '#'" v-html="link.label"
           class="px-3 py-1.5 rounded-lg text-sm border transition"
-          :class="link.active ? 'bg-orange-500 text-white border-orange-500' : 'border-gray-200 text-gray-600'" />
+          :class="link.active 
+            ? 'bg-orange-500 text-white border-orange-500' 
+            : (isDark ? 'border-slate-600 text-slate-400 hover:bg-slate-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50')" />
       </div>
     </div>
   </AdminLayout>

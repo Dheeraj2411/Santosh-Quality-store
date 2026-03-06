@@ -3,14 +3,14 @@
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <!-- Header -->
       <div class="mb-8 flex items-center gap-3">
-        <Link href="/products" class="text-gray-400 hover:text-orange-500 transition">
+        <Link href="/products" class="transition text-gray-400 hover:text-orange-500">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
           </svg>
         </Link>
         <div>
           <h1 class="text-3xl font-extrabold text-gray-900">Checkout</h1>
-          <p class="text-gray-500 text-sm mt-0.5">Review your order and complete payment</p>
+          <p class="text-sm mt-0.5 text-gray-500">Review your order and complete payment</p>
         </div>
       </div>
 
@@ -19,9 +19,9 @@
         <div class="lg:col-span-2 space-y-6">
 
           <!-- Delivery Address -->
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div class="rounded-2xl shadow-sm p-6 bg-white border border-gray-100">
             <div class="flex items-center justify-between mb-4">
-              <h2 class="font-bold text-gray-900 text-lg flex items-center gap-2">
+              <h2 class="font-bold text-lg flex items-center gap-2 text-gray-900">
                 📍 Delivery Address
               </h2>
               <Link href="/dashboard/addresses" class="text-xs text-orange-500 hover:text-orange-600 font-medium">
@@ -55,8 +55,8 @@
           </div>
 
           <!-- Payment Method -->
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 class="font-bold text-gray-900 text-lg mb-4">💳 Payment Method</h2>
+          <div class="rounded-2xl shadow-sm p-6 bg-white border border-gray-100">
+            <h2 class="font-bold text-lg mb-4 text-gray-900">💳 Payment Method</h2>
 
             <div class="space-y-3">
               <!-- Razorpay -->
@@ -92,18 +92,19 @@
           </div>
 
           <!-- Order Notes -->
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 class="font-bold text-gray-900 text-lg mb-3">📝 Order Notes <span class="text-gray-400 font-normal text-sm">(Optional)</span></h2>
+          <div class="rounded-2xl shadow-sm p-6 bg-white border border-gray-100">
+            <h2 class="font-bold text-lg mb-3 text-gray-900">📝 Order Notes <span class="font-normal text-sm text-gray-400">(Optional)</span></h2>
             <textarea v-model="form.notes" rows="3"
               placeholder="Any special instructions for delivery? e.g. Door code, timing preference..."
-              class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none resize-none"></textarea>
+              class="w-full rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none resize-none transition border border-gray-200"
+            ></textarea>
           </div>
         </div>
 
         <!-- ─── Right: Order Summary ──────────────────────────────────────── -->
         <div>
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-20">
-            <h2 class="font-bold text-gray-900 text-lg mb-4">📋 Order Summary</h2>
+          <div class="rounded-2xl shadow-sm p-6 sticky top-20 bg-white border border-gray-100">
+            <h2 class="font-bold text-lg mb-4 text-gray-900">📋 Order Summary</h2>
 
             <!-- Cart Items -->
             <div class="space-y-3 mb-5 max-h-64 overflow-y-auto pr-1">
@@ -190,10 +191,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { Link, router } from '@inertiajs/vue3'
+import { Link, router, usePage } from '@inertiajs/vue3'
 import GuestLayout from '@/Layouts/GuestLayout.vue'
 import { useCartStore } from '@/stores/cartStore'
 import axios from 'axios'
+
 
 const props = defineProps({
   addresses: { type: Array, default: () => [] },
@@ -250,7 +252,14 @@ function placeCodOrder() {
     address_id: form.value.address_id,
     notes:      form.value.notes,
   }, {
-    onSuccess: () => cart.fetchCart(),
+    onSuccess: (page) => {
+      cart.fetchCart()
+      // Open WhatsApp with order details
+      const waUrl = page.props.flash?.whatsapp_url
+      if (waUrl) {
+        window.open(waUrl, '_blank')
+      }
+    },
     onFinish:  () => { submitting.value = false },
   })
 }
@@ -287,7 +296,7 @@ async function initiateRazorpay() {
     key:         rzpData.key_id,
     amount:      rzpData.amount,
     currency:    rzpData.currency,
-    name:        'Santosh Store',
+    name:        usePage().props.settings?.store_name || 'Santosh Store',
     description: 'Grocery Order',
     order_id:    rzpData.razorpay_order_id,
     prefill: {
@@ -309,6 +318,10 @@ async function initiateRazorpay() {
 
         if (verifyRes.data.success) {
           await cart.fetchCart()
+          // Open WhatsApp with order details
+          if (verifyRes.data.whatsapp_url) {
+            window.open(verifyRes.data.whatsapp_url, '_blank')
+          }
           window.location.href = verifyRes.data.redirect
         }
       } catch (err) {
