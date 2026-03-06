@@ -17,7 +17,7 @@ const proxyChecked = computed({
     get() {
         return props.checked;
     },
-
+    
     set(val) {
         emit('update:checked', val);
     },
